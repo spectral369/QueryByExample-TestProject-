@@ -48,8 +48,10 @@ public class QueryByExampleAPI {
 			}
 
 		}
-		if (selectedDB.equals(DatabasesAvailable.ORACLE))
+		if (selectedDB.equals(DatabasesAvailable.ORACLE)){
 			choise.ChoseConn(2);
+			queryData =  new QueryData();
+		}
 
 	}
 
@@ -151,41 +153,64 @@ public class QueryByExampleAPI {
 		return choise.getCon();
 	}
 
-	public void changeDatabase(String database) throws SQLException {
+
+
+	public void changeSQLDatabase(String database) throws SQLException {
 		choise.sql.changedb(database);
 	}
-
-	public ArrayList<Object> getArrayListTables() {
+	
+	public ArrayList<Object> getSQLArrayListTables() {
 		return choise.sql.getDBTAbles();
 
 	}
+	
 
-	public String[] getStringArraytables() {
+	public String[] getSQLStringArraytables() {
 		return choise.sql.getTables();
 	}
+	
+	public String[] getOracleStringArraySchemas(){
+		return choise.oracle.schemas;
+	}
+	
+	public ArrayList<String> getOracleTables(String Schema){
+		return choise.oracle.getOracleTables(Schema);
+	}
 
-	public ArrayList<Object> getColumnsFromTable(String table) {
+	public ArrayList<Object> getSQLColumnsFromTable(String table) {
 		return choise.sql.getColumns(table);
 	}
 
-	public QueryData QBE(String sqlDatabase, String Table, String QueryString,
+	public QueryData SQLQBE(String sqlDatabase, String Table, String QueryString,
 			String[] collsSelected) {
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString,
 				collsSelected);
 	}
+	
+	public ArrayList<String> getOracleColumns(String Table){
+		return choise.oracle.getOracleColumns(Table);
+	}
+	
+	public QueryData OracleSimpleQuery(String Query){
+		return choise.oracle.SimpleQuery(Query);
+	}
+	
+	public QueryData OracleQBE(String schema,String table,String Query,String[] columns){
+		return choise.oracle.oracleQBE(schema, table, Query, columns);
+	}
 
-	public QueryData SimpleQuery(String Query) {
+	public QueryData SQLSimpleQuery(String Query) {
 		return choise.sql.SimpleQuery(Query);
 	}
 
-	public Vector<Object> QBEColumns(String sqlDatabase, String Table,
+	public Vector<Object> SQLQBEColumns(String sqlDatabase, String Table,
 			String QueryString, String[] collsSelected) {
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString,
 				collsSelected).QBECols;
 	}
 
 	// not tested
-	public QueryData getQueryData() {
+	public QueryData SQLgetQueryData() {
 		if (TCQ == false)
 			return null;
 		queryData = choise.sql.QBEQuerySQL(selectedDB.name().toString(),
@@ -193,31 +218,35 @@ public class QueryByExampleAPI {
 		return queryData;
 	}
 
-	public Vector<Object> QBEData(String sqlDatabase, String Table,
+	public Vector<Object> SQLQBEData(String sqlDatabase, String Table,
 			String QueryString, String[] collsSelected) {
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString,
 				collsSelected).data;
 	}
 
-	public QueryData QBE(String sqlDatabase, String Table, String QueryString,
+	public QueryData SQLQBE(String sqlDatabase, String Table, String QueryString,
 			String collsSelected) {
 		String[] cols = new String[1];
 		cols[0] = collsSelected;
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString, cols);
 	}
 
-	public QueryData QBE(String sqldatabase, String table, String Querystring) {
+	public QueryData SQLQBE(String sqldatabase, String table, String Querystring) {
 
 		// TODO Auto-generated method stub
 		return choise.sql.QBEQuerySQL(sqldatabase, table, Querystring, null);
 	}
 
-	public String[] showAvailableSchemas() {
+	public String[] showSQLAvailableSchemas() {
 		return choise.sql.getDatabases();
 	}
 
-	public boolean checkConnectionSQL() {
+	public boolean checkSQLConnection() {
 		return choise.sql.checkConnection();
+	}
+	
+	public boolean checkOracleConnection(){
+		return choise.oracle.CheckConnectionOracle();
 	}
 
 }

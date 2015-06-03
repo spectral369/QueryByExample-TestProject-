@@ -385,7 +385,7 @@ public class WIndowMain {
 					tabbedPane.remove(panel);
 					label.setForeground(Color.GREEN);
 					try {
-						String[] schem = api.showAvailableSchemas();
+						String[] schem = api.showSQLAvailableSchemas();
 
 						for (String s : schem)
 							schemas.addItem(s);
@@ -436,7 +436,7 @@ public class WIndowMain {
 		}
 		
 		QueryData qd = new QueryData();
-		qd = api.QBE(schemas.getSelectedItem().toString(), tableList
+		qd = api.SQLQBE(schemas.getSelectedItem().toString(), tableList
 				.getSelectedValue().toString(), queryTextField.getText(), sel);
 
 		tablemodel.setDataVector(qd.getData(), qd.getQBECols());
@@ -472,7 +472,7 @@ public class WIndowMain {
 		// TODO Auto-generated method stub
 		if (tableList.getSelectedValue() != null) {
 			String t = tableList.getSelectedValue().toString();
-			ArrayList<Object> arr = api.getColumnsFromTable(t);
+			ArrayList<Object> arr = api.getSQLColumnsFromTable(t);
 			ListModel model = new DefaultListModel<String>();
 			for (Object s : arr)
 				((DefaultListModel<String>) model).addElement(s.toString());
@@ -488,10 +488,10 @@ public class WIndowMain {
 
 		try {
 
-			api.changeDatabase(e.getItem().toString());
+			api.changeSQLDatabase(e.getItem().toString());
 			modelList = new DefaultListModel<String>();
 			modelList.removeAllElements();
-			for (String s : api.getStringArraytables()) {
+			for (String s : api.getSQLStringArraytables()) {
 				modelList.addElement(s.toString());
 
 			}

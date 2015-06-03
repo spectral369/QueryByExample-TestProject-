@@ -29,8 +29,9 @@ public abstract class ConnectionDB {
 	Connection connection = null;
 	Statement statement = null;
 	ResultSet resultSet = null;
-	protected Vector<Object> QBECols = null;
-	protected Vector<Object> data = null;
+	protected Vector<Object> QBECols;
+	protected Vector<Object> data;
+
 
 	// sql constructor
 	public ConnectionDB(String userName, char[] password, String server,

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class ChoseConnection {
 	private Logger logChose;
 	protected ConnectionMysql sql = null;
-	protected static ConnectionOracle oracle = null;
+	protected ConnectionOracle oracle = null;
 	protected ConnectionDB connDB = null;
 	protected Object ins = null;
 
@@ -72,7 +72,6 @@ public class ChoseConnection {
 			break;
 		case 2:
 			logChose.log(Level.INFO, "Oracle Server Chosens");
-			if (oracle == null)
 				oracle = new ConnectionOracle(userName, password, server, port,
 						SID);
 			break;
