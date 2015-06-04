@@ -31,9 +31,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -41,12 +44,7 @@ import com.querybyexample.functionality.DatabasesAvailable;
 import com.querybyexample.functionality.QueryByExampleAPI;
 import com.querybyexample.functionality.QueryData;
 
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.ListSelectionModel;
-
-public class WIndowMain {
+public class WIndowMain{
 
 	private JPanel panel;
 	private JLabel conStatus;
@@ -76,7 +74,11 @@ public class WIndowMain {
 	boolean conFieldsCheck = false;
 	private DefaultListModel<String> modelList;
 	private boolean collsSelected = false;
-	private Object[] ColsSelected;
+	private Object[] ColsSelected;//for testing
+	private JMenuItem mntmRestart;
+	private JMenu mnExport;
+	private JMenuItem mntmExportToPdf;
+	private QueryData queryData =  null;
 
 	/**
 	 * Launch the application.
@@ -109,7 +111,6 @@ public class WIndowMain {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 800, 523);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
@@ -192,14 +193,14 @@ public class WIndowMain {
 
 		panel_1 = new JPanel();
 		// make tab 2 hidden
-		//tabbedPane.addTab("Query by Example", null, panel_1, null);
+		// tabbedPane.addTab("Query by Example", null, panel_1, null);
 
 		panel_1.setLayout(new MigLayout(
 				"",
 				"[][163.00,grow][30.00][][21.00][-21.00][-26.00][-33.00][-29.00][-40.00][350.00,grow][][][][][][][][103.00,grow][][]",
 				"[][][grow]"));
 
-		schemas = new JComboBox();
+		schemas = new JComboBox<>();
 		schemas.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				schemasItemStateChanged(e);
@@ -232,7 +233,7 @@ public class WIndowMain {
 		scrollPane = new JScrollPane();
 		panel_1.add(scrollPane, "cell 1 2,grow");
 
-		tableList = new JList();
+		tableList = new JList<>();
 		tableList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -250,7 +251,7 @@ public class WIndowMain {
 		scrollPane_1 = new JScrollPane();
 		panel_1.add(scrollPane_1, "cell 15 2 6 1,grow");
 
-		columnLIst = new JList();
+		columnLIst = new JList<>();
 
 		columnLIst.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -258,6 +259,11 @@ public class WIndowMain {
 			}
 		});
 		columnLIst.setSelectionModel(new DefaultListSelectionModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 636635843604981478L;
+
 			@Override
 			public void setSelectionInterval(int index0, int index1) {
 				if (super.isSelectedIndex(index0)) {
@@ -303,7 +309,27 @@ public class WIndowMain {
 				System.exit(1);
 			}
 		});
+		
+		mntmRestart = new JMenuItem("Restart");
+		mntmRestart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 restartActionPerformed(e);
+			}
+		});
+		mnFile.add(mntmRestart);
 		mnFile.add(mntmExit);
+		
+		mnExport = new JMenu("Export");
+		menuBar.add(mnExport);
+		
+		mntmExportToPdf = new JMenuItem("Export to PDF");
+		mntmExportToPdf.setEnabled(false);
+		mntmExportToPdf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportToPDFActionPerformed(e);
+			}
+		});
+		mnExport.add(mntmExportToPdf);
 
 		JMenu mnAbout = new JMenu("Help");
 		menuBar.add(mnAbout);
@@ -319,6 +345,20 @@ public class WIndowMain {
 		});
 		mnAbout.add(mntmAbout);
 
+	}
+
+	protected void exportToPDFActionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+		api.ExportToPDFDefault(queryData);
+	}
+
+	protected void restartActionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		WIndowMain.this.frame.dispose();
+		new WIndowMain().frame.setVisible(true);
+		
+		
 	}
 
 	protected void connectionButtonActionPerformed(ActionEvent e) {
@@ -346,6 +386,12 @@ public class WIndowMain {
 
 						if (oracleSID.getText().isEmpty())
 							conStatus.setText("Oracle SID not set");
+						else {
+							conStatus.setForeground(Color.black);
+							conStatus.setText("Waiting for connection....");
+							checkInfo = true;
+						}
+
 					} else {
 						conStatus.setForeground(Color.black);
 						conStatus.setText("Waiting for connection....");
@@ -370,7 +416,6 @@ public class WIndowMain {
 				api.beginSession();
 				try {
 					connectionValid = api.getConnection().isValid(2000);
-					conStatus.setText("Connection Success!");
 
 				} catch (Exception exception) {
 					conStatus.setForeground(Color.red);
@@ -381,7 +426,7 @@ public class WIndowMain {
 					conStatus.setForeground(Color.green);
 					conStatus.setText("Connection Success");
 					// make tab 2 visible
-					 tabbedPane.addTab("Query by Example", null, panel_1,null);
+					tabbedPane.addTab("Query by Example", null, panel_1, null);
 					tabbedPane.remove(panel);
 					label.setForeground(Color.GREEN);
 					try {
@@ -402,6 +447,45 @@ public class WIndowMain {
 					conStatus.setForeground(Color.red);
 					conStatus.setText("Connection Failed");
 				}
+			} else if (conDB.getSelectedItem().equals("ORACLE")) {
+				api.setOracleServerInformation(username.getText(),
+						String.copyValueOf(password.getPassword()),
+						server.getText(), Integer.parseInt(port.getText()),
+						oracleSID.getText());
+				api.beginSession();
+				try {
+					connectionValid = api.checkOracleConnection();
+
+				} catch (Exception exception) {
+					conStatus.setForeground(Color.red);
+					checkInfo = false;
+					conStatus.setText("Connection Failed");
+				}
+				if (connectionValid) {
+					conStatus.setForeground(Color.green);
+					conStatus.setText("Connection Success");
+					tabbedPane.addTab("Query by Example", null, panel_1, null);
+					tabbedPane.remove(panel);
+					label.setForeground(Color.GREEN);
+					try {
+						String[] schem = api.getOracleStringArraySchemas();
+
+						for (String s : schem)
+							schemas.addItem(s);
+						tablemodel = new DefaultTableModel();
+						tabbedPane.setSelectedIndex(0);
+					} catch (Exception ex) {
+						ex.getMessage();
+						Component frame = null;
+						JOptionPane.showConfirmDialog(frame,
+								"NO databases available \n for current user");
+					}
+
+				} else {
+					conStatus.setForeground(Color.red);
+					conStatus.setText("Connection Failed");
+
+				}
 			}
 		}
 
@@ -409,40 +493,81 @@ public class WIndowMain {
 
 	protected void QueryActionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		tablemodel.fireTableDataChanged();
-		Object[] selected;
-		String[] sel = null;
-		if (columnLIst.isSelectionEmpty())
-			collsSelected = false;
-		else
-			collsSelected = true;
-		if (collsSelected == true) {
-			selected = columnLIst.getSelectedValuesList().toArray();
-			sel = new String[columnLIst.getSelectedValuesList().size()];
-			for (int i = 0; i < columnLIst.getSelectedValuesList().size(); i++) {
-				sel[i] = selected[i].toString();
+		if(!mntmExportToPdf.isEnabled())
+			mntmExportToPdf.setEnabled(true);
+		if (api.getDatabaseAvailable().toString().equals("MYSQL")) {
+			tablemodel.fireTableDataChanged();
+			Object[] selected;
+			String[] sel = null;
+			if (columnLIst.isSelectionEmpty())
+				collsSelected = false;
+			else
+				collsSelected = true;
+			if (collsSelected == true) {
+				selected = columnLIst.getSelectedValuesList().toArray();
+				sel = new String[columnLIst.getSelectedValuesList().size()];
+				for (int i = 0; i < columnLIst.getSelectedValuesList().size(); i++) {
+					sel[i] = selected[i].toString();
+				}
+			} else if (collsSelected == false
+					&& columnLIst.getModel().getSize() > 1) {
+				sel = new String[columnLIst.getModel().getSize()];
+				for (int i = 0; i < columnLIst.getModel().getSize(); i++) {
+					sel[i] = columnLIst.getModel().getElementAt(i).toString();
+				}
+			} else if (collsSelected == false
+					&& columnLIst.getModel().getSize() < 1) {
+				queryTextField.setText("table contains no columns");
+				queryTextField.setEditable(false);
+				btnQuery.setEnabled(false);
 			}
-		} else if (collsSelected == false
-				&& columnLIst.getModel().getSize() > 1) {
-			sel = new String[columnLIst.getModel().getSize()];
-			for (int i = 0; i < columnLIst.getModel().getSize(); i++) {
-				sel[i] = columnLIst.getModel().getElementAt(i).toString();
-			}
-		} else if (collsSelected == false
-				&& columnLIst.getModel().getSize() < 1) {
-			queryTextField.setText("table contains no columns");
-			queryTextField.setEditable(false);
-			btnQuery.setEnabled(false);
-		}
-		
-		QueryData qd = new QueryData();
-		qd = api.SQLQBE(schemas.getSelectedItem().toString(), tableList
-				.getSelectedValue().toString(), queryTextField.getText(), sel);
 
-		tablemodel.setDataVector(qd.getData(), qd.getQBECols());
-		table.setModel(tablemodel);
-		tablemodel.fireTableDataChanged();
-		table.revalidate();
+			queryData = new QueryData();
+			queryData = api.SQLQBE(schemas.getSelectedItem().toString(), tableList
+					.getSelectedValue().toString(), queryTextField.getText(),
+					sel);
+
+			tablemodel.setDataVector(queryData.getData(), queryData.getQBECols());
+			table.setModel(tablemodel);
+			tablemodel.fireTableDataChanged();
+			table.revalidate();
+		} else if (api.getDatabaseAvailable().toString().equals("ORACLE")) {
+			tablemodel.fireTableDataChanged();
+			Object[] selected;
+			String[] sel = null;
+			if (columnLIst.isSelectionEmpty())
+				collsSelected = false;
+			else
+				collsSelected = true;
+			if (collsSelected == true) {
+				selected = columnLIst.getSelectedValuesList().toArray();
+				sel = new String[columnLIst.getSelectedValuesList().size()];
+				for (int i = 0; i < columnLIst.getSelectedValuesList().size(); i++) {
+					sel[i] = selected[i].toString();
+				}
+			} else if (collsSelected == false
+					&& columnLIst.getModel().getSize() > 1) {
+				sel = new String[columnLIst.getModel().getSize()];
+				for (int i = 0; i < columnLIst.getModel().getSize(); i++) {
+					sel[i] = columnLIst.getModel().getElementAt(i).toString();
+				}
+			} else if (collsSelected == false
+					&& columnLIst.getModel().getSize() < 1) {
+				queryTextField.setText("table contains no columns");
+				queryTextField.setEditable(false);
+				btnQuery.setEnabled(false);
+			}
+
+			queryData = new QueryData();
+			queryData = api.OracleQBE(schemas.getSelectedItem().toString(), tableList
+					.getSelectedValue().toString(), queryTextField.getText(),
+					sel);
+
+			tablemodel.setDataVector(queryData.getData(), queryData.getQBECols());
+			table.setModel(tablemodel);
+			tablemodel.fireTableDataChanged();
+			table.revalidate();
+		}
 
 	}
 
@@ -467,31 +592,60 @@ public class WIndowMain {
 		btnQuery.setEnabled(true);
 
 	}
-
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void tableListValueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
-		if (tableList.getSelectedValue() != null) {
+		if (api.getDatabaseAvailable().toString().equals("MYSQL")) {
+			if (tableList.getSelectedValue() != null) {
+				String t = tableList.getSelectedValue().toString();
+				ArrayList<Object> arr = api.getSQLColumnsFromTable(t);
+				ListModel model = new DefaultListModel<String>();
+				for (Object s : arr)
+					((DefaultListModel<String>) model).addElement(s.toString());
+				columnLIst.setModel(model);
+				columnLIst.setSelectedIndex(0);
+			}
+		} else if (api.getDatabaseAvailable().toString().equals("ORACLE")) {
 			String t = tableList.getSelectedValue().toString();
-			ArrayList<Object> arr = api.getSQLColumnsFromTable(t);
+			ArrayList<String> arr = api.getOracleColumns(t);
 			ListModel model = new DefaultListModel<String>();
 			for (Object s : arr)
 				((DefaultListModel<String>) model).addElement(s.toString());
 			columnLIst.setModel(model);
 			columnLIst.setSelectedIndex(0);
-
 		}
 
 	}
 
 	protected void schemasItemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
+		if (api.getDatabaseAvailable().toString().equals("MYSQL")) {
+			try {
 
-		try {
+				api.changeSQLDatabase(e.getItem().toString());
+				modelList = new DefaultListModel<String>();
+				modelList.removeAllElements();
+				for (String s : api.getSQLStringArraytables()) {
+					modelList.addElement(s.toString());
 
-			api.changeSQLDatabase(e.getItem().toString());
+				}
+				tableList.setModel(modelList);
+				try {
+					tableList.setSelectedIndex(0);
+				} catch (Exception ex) {
+				}
+				tableList.revalidate();
+				tableList.updateUI();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (api.getDatabaseAvailable().toString().equals("ORACLE")) {
+
 			modelList = new DefaultListModel<String>();
 			modelList.removeAllElements();
-			for (String s : api.getSQLStringArraytables()) {
+			for (String s : api.getOracleTables(e.getItem().toString())) {
 				modelList.addElement(s.toString());
 
 			}
@@ -502,9 +656,6 @@ public class WIndowMain {
 			}
 			tableList.revalidate();
 			tableList.updateUI();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 
 	}

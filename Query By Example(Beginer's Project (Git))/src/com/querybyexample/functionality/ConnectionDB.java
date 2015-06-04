@@ -32,7 +32,6 @@ public abstract class ConnectionDB {
 	protected Vector<Object> QBECols;
 	protected Vector<Object> data;
 
-
 	// sql constructor
 	public ConnectionDB(String userName, char[] password, String server,
 			int port) {

@@ -48,9 +48,10 @@ public class QueryByExampleAPI {
 			}
 
 		}
-		if (selectedDB.equals(DatabasesAvailable.ORACLE)){
+		if (selectedDB.equals(DatabasesAvailable.ORACLE)) {
 			choise.ChoseConn(2);
-			queryData =  new QueryData();
+			queryData = new QueryData();
+			choise.oracle.setConnection();
 		}
 
 	}
@@ -143,8 +144,8 @@ public class QueryByExampleAPI {
 
 	// setOracle server
 	public void setOracleServerInformation(String userName, String password,
-			String server, int port, String SID, String schema) {
-		choise.setInfo(userName, password, server, port, SID, schema);
+			String server, int port, String SID) {
+		choise.setInfo(userName, password, server, port, SID);
 	}
 
 	// get Connection
@@ -153,27 +154,28 @@ public class QueryByExampleAPI {
 		return choise.getCon();
 	}
 
-
+	public DatabasesAvailable getDatabaseAvailable() {
+		return selectedDB;
+	}
 
 	public void changeSQLDatabase(String database) throws SQLException {
 		choise.sql.changedb(database);
 	}
-	
+
 	public ArrayList<Object> getSQLArrayListTables() {
 		return choise.sql.getDBTAbles();
 
 	}
-	
 
 	public String[] getSQLStringArraytables() {
 		return choise.sql.getTables();
 	}
-	
-	public String[] getOracleStringArraySchemas(){
+
+	public String[] getOracleStringArraySchemas() {
 		return choise.oracle.schemas;
 	}
-	
-	public ArrayList<String> getOracleTables(String Schema){
+
+	public ArrayList<String> getOracleTables(String Schema) {
 		return choise.oracle.getOracleTables(Schema);
 	}
 
@@ -181,21 +183,22 @@ public class QueryByExampleAPI {
 		return choise.sql.getColumns(table);
 	}
 
-	public QueryData SQLQBE(String sqlDatabase, String Table, String QueryString,
-			String[] collsSelected) {
+	public QueryData SQLQBE(String sqlDatabase, String Table,
+			String QueryString, String[] collsSelected) {
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString,
 				collsSelected);
 	}
-	
-	public ArrayList<String> getOracleColumns(String Table){
+
+	public ArrayList<String> getOracleColumns(String Table) {
 		return choise.oracle.getOracleColumns(Table);
 	}
-	
-	public QueryData OracleSimpleQuery(String Query){
+
+	public QueryData OracleSimpleQuery(String Query) {
 		return choise.oracle.SimpleQuery(Query);
 	}
-	
-	public QueryData OracleQBE(String schema,String table,String Query,String[] columns){
+
+	public QueryData OracleQBE(String schema, String table, String Query,
+			String[] columns) {
 		return choise.oracle.oracleQBE(schema, table, Query, columns);
 	}
 
@@ -224,8 +227,8 @@ public class QueryByExampleAPI {
 				collsSelected).data;
 	}
 
-	public QueryData SQLQBE(String sqlDatabase, String Table, String QueryString,
-			String collsSelected) {
+	public QueryData SQLQBE(String sqlDatabase, String Table,
+			String QueryString, String collsSelected) {
 		String[] cols = new String[1];
 		cols[0] = collsSelected;
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString, cols);
@@ -244,9 +247,14 @@ public class QueryByExampleAPI {
 	public boolean checkSQLConnection() {
 		return choise.sql.checkConnection();
 	}
-	
-	public boolean checkOracleConnection(){
+
+	public boolean checkOracleConnection() {
 		return choise.oracle.CheckConnectionOracle();
+	}
+	
+	public void ExportToPDFDefault(QueryData queryData){
+		PDFExport pdf =  new PDFExport();
+		pdf.defaultExportToPDF(queryData);
 	}
 
 }

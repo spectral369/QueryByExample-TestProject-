@@ -34,13 +34,12 @@ public class ChoseConnection {
 	}
 
 	protected void setInfo(String userName, String password, String server,
-			int port, String SID, String database) {
+			int port, String SID) {
 		this.userName = userName;
 		this.password = password.toCharArray();
 		this.server = server;
 		this.port = port;
 		this.SID = SID;
-		this.database = database;
 
 	}
 
@@ -72,8 +71,7 @@ public class ChoseConnection {
 			break;
 		case 2:
 			logChose.log(Level.INFO, "Oracle Server Chosens");
-				oracle = new ConnectionOracle(userName, password, server, port,
-						SID);
+			oracle = new ConnectionOracle(userName, password, server, port, SID);
 			break;
 
 		default:
