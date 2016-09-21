@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -88,9 +90,18 @@ public class AppletGUI extends JApplet {
 	@Override
 	public void init() {
 		try {
+			AccessController.doPrivileged(new PrivilegedAction() {
+			    public Object run() {
+			    	api.setLogger(false);
+			    	api = new QueryByExampleAPI();
+			    	api.setLogger(false);
+			    	initialize();
+			        return null;
+			    }
+			});
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					api = new QueryByExampleAPI();
+					
 					initialize(); // initialize the GUI
 
 				}

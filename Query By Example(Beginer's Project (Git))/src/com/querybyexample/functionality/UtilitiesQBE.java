@@ -17,9 +17,11 @@ import java.util.logging.XMLFormatter;
  */
 public class UtilitiesQBE {
 	private static FileHandler fh;
+	public static boolean isLogAcctive = true;
 
 	public static synchronized Logger getLogger(Object obj) throws SecurityException,
 			IOException {
+		if(isLogAcctive){
 		final Logger log = Logger.getLogger(obj.toString());
 		Handler consoleHandler = new ConsoleHandler();
 		consoleHandler.setLevel(Level.FINER);
@@ -29,6 +31,7 @@ public class UtilitiesQBE {
 		fh.setFormatter(new XMLFormatter());
 		log.addHandler(fh);
 		return log;
+		}else return null;
 	}
 
 }

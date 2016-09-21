@@ -49,12 +49,13 @@ public class ConnectionOracle extends ConnectionDB {
 				System.out.println(resultSet.getString(1));
 
 			}
-
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.FINE, "Conn SUCCess", connection);
 			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("SQLEXCEPTION");
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return false;

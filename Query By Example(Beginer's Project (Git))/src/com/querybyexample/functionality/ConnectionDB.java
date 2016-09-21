@@ -40,6 +40,7 @@ public abstract class ConnectionDB {
 		this.server = server;
 		this.port = port;
 		try {
+			if(UtilitiesQBE.isLogAcctive)
 			log = UtilitiesQBE.getLogger(ConnectionDB.class);
 		} catch (SecurityException | IOException e) {
 			// TODO Auto-generated catch block
@@ -56,6 +57,7 @@ public abstract class ConnectionDB {
 		this.port = port;
 		this.SID = SID;
 		try {
+			if(UtilitiesQBE.isLogAcctive)
 			log = UtilitiesQBE.getLogger(ConnectionDB.class);
 		} catch (SecurityException | IOException e) {
 			// TODO Auto-generated catch block

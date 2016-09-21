@@ -24,6 +24,7 @@ public class QueryByExampleAPI {
 		if (choise == null)
 			choise = new ChoseConnection();
 		try {
+			if(UtilitiesQBE.isLogAcctive)
 			log = UtilitiesQBE.getLogger(QueryByExampleAPI.class);
 		} catch (SecurityException | IOException e) {
 			// TODO Auto-generated catch block
@@ -255,6 +256,11 @@ public class QueryByExampleAPI {
 	public void ExportToPDFDefault(QueryData queryData){
 		PDFExport pdf =  new PDFExport();
 		pdf.defaultExportToPDF(queryData);
+	}
+	
+	//settings for logger
+	public static void setLogger(boolean acctive){
+		UtilitiesQBE.isLogAcctive=acctive;
 	}
 
 }

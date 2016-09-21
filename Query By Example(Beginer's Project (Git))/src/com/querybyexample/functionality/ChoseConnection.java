@@ -22,6 +22,7 @@ public class ChoseConnection {
 
 	private void SetLog() {
 		try {
+			if(UtilitiesQBE.isLogAcctive)
 			logChose = UtilitiesQBE.getLogger(ConnectionMysql.class);
 		} catch (SecurityException | IOException e) {
 			// TODO Auto-generated catch block
@@ -66,15 +67,18 @@ public class ChoseConnection {
 	public void ChoseConn(int i) {
 		switch (i) {
 		case 1:
+			if(UtilitiesQBE.isLogAcctive)
 			logChose.log(Level.INFO, "SQL Server Chosen");
 			sql = new ConnectionMysql(userName, password, server, port);
 			break;
 		case 2:
+			if(UtilitiesQBE.isLogAcctive)
 			logChose.log(Level.INFO, "Oracle Server Chosens");
 			oracle = new ConnectionOracle(userName, password, server, port, SID);
 			break;
 
 		default:
+			if(UtilitiesQBE.isLogAcctive)
 			logChose.log(Level.WARNING, "bad Choise");
 			break;
 		}

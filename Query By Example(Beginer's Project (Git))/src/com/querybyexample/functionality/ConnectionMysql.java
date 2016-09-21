@@ -36,6 +36,7 @@ public class ConnectionMysql extends ConnectionDB {
 		try {
 			dataSource = new MysqlDataSource();
 			mysqlSetDataSource();
+			
 			connection = dataSource.getConnection();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -44,6 +45,7 @@ public class ConnectionMysql extends ConnectionDB {
 	}
 
 	public void setDatabase(String database) {
+		if(UtilitiesQBE.isLogAcctive)
 		log.log(Level.INFO, "Dtabase Chosen = " + database);
 		selectDatabase(database);
 	}
@@ -55,6 +57,7 @@ public class ConnectionMysql extends ConnectionDB {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.getMessage();
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.WARNING, "failed to select DB", e);
 		}
 	}
@@ -70,11 +73,13 @@ public class ConnectionMysql extends ConnectionDB {
 		 */
 		try {
 			if (connection.isValid(5000)) {
+				if(UtilitiesQBE.isLogAcctive)
 				log.log(Level.WARNING, "Success", connection);
 				return true;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.SEVERE, "Connection failed", connection);
 			return false;
 		}
@@ -111,6 +116,7 @@ public class ConnectionMysql extends ConnectionDB {
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.SEVERE, e.getMessage(), connection);
 		}
 
@@ -144,6 +150,7 @@ public class ConnectionMysql extends ConnectionDB {
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.SEVERE, e.getMessage(), connection);
 		}
 
@@ -163,6 +170,7 @@ public class ConnectionMysql extends ConnectionDB {
 	protected void changedb(String db) throws SQLException {
 		try {
 			connection.createStatement().executeQuery("use " + db + ";");
+			if(UtilitiesQBE.isLogAcctive)
 			log.log(Level.INFO, "database changed: " + db);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -232,6 +240,7 @@ public class ConnectionMysql extends ConnectionDB {
 						" ");
 				String query = "SELECT " + sb + " FROM " + sqlDatabase + "."
 						+ Table + " where " + sb2 + ";";
+				if(UtilitiesQBE.isLogAcctive)
 				log.log(Level.INFO, "QueryString: " + query);
 				resultSet = statement.executeQuery(query);
 
@@ -252,6 +261,7 @@ public class ConnectionMysql extends ConnectionDB {
 						" ");
 				String query = "SELECT " + sb + " FROM " + sqlDatabase + "."
 						+ Table + " WHERE " + sb2 + ";";
+				if(UtilitiesQBE.isLogAcctive)
 				log.log(Level.INFO, "Query String: " + query);
 				resultSet = statement.executeQuery(query);
 
