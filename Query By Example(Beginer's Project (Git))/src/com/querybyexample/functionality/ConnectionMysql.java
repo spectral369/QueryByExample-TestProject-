@@ -226,10 +226,10 @@ public class ConnectionMysql extends ConnectionDB {
 			statement = connection.createStatement();
 			statement.executeQuery("use " + sqlDatabase + ";");
 			statement = connection.createStatement();
-
+			StringBuilder sb = new StringBuilder();
+			StringBuilder sb2 = new StringBuilder();
 			if (isColSelected == true) {
-				StringBuilder sb = new StringBuilder();
-				StringBuilder sb2 = new StringBuilder();
+				
 
 				for (String s : collsSelected) {
 					sb.append(s + ", ");
@@ -238,15 +238,30 @@ public class ConnectionMysql extends ConnectionDB {
 				sb.replace(sb.lastIndexOf(","), sb.lastIndexOf(",") + 1, " ");
 				sb2.replace(sb2.lastIndexOf("OR"), sb2.lastIndexOf("OR") + 2,
 						" ");
-				String query = "SELECT " + sb + " FROM " + sqlDatabase + "."
-						+ Table + " where " + sb2 + ";";
-				if(UtilitiesQBE.isLogAcctive)
-				log.log(Level.INFO, "QueryString: " + query);
-				resultSet = statement.executeQuery(query);
-
+				
+				String[]tokens = QueryString.split("\\s+|[,:-]");
+				if(QueryString.contains(":")&&((tokens.length%2)==0)){
+				
+				StringBuilder ad =  new StringBuilder();
+				
+					
+				for(int h=0;h<tokens.length;h=h+2){
+				ad.append(tokens[h]);
+				ad.append("='");
+				ad.append(tokens[h+1]);
+				ad.append("' ");
+				ad.append("OR ");
+				}
+				
+				ad.replace(ad.lastIndexOf("OR"), ad.lastIndexOf("OR") + 2,"");
+				sb2=ad;
+				}
+				
+				
+				
 			} else if (isColSelected == false) {
-				StringBuilder sb = new StringBuilder();
-				StringBuilder sb2 = new StringBuilder();
+				//StringBuilder sb = new StringBuilder();
+			//	StringBuilder sb2 = new StringBuilder();
 				ArrayList<Object> tabl = new ArrayList<Object>(
 						getColumns(Table));
 
@@ -259,14 +274,39 @@ public class ConnectionMysql extends ConnectionDB {
 							+ QueryString + "%' " + " OR ");
 				sb2.replace(sb2.lastIndexOf("OR"), sb2.lastIndexOf("OR") + 2,
 						" ");
-				String query = "SELECT " + sb + " FROM " + sqlDatabase + "."
-						+ Table + " WHERE " + sb2 + ";";
-				if(UtilitiesQBE.isLogAcctive)
-				log.log(Level.INFO, "Query String: " + query);
-				resultSet = statement.executeQuery(query);
+				String[]tokens = QueryString.split("\\s+|[,:-]");
+				
+				if(QueryString.contains(":")&&((tokens.length%2)==0)){
+					
+					StringBuilder ad =  new StringBuilder();
+					
+					for(int h=0;h<tokens.length;h=h+2){
+					ad.append(tokens[h]);
+					ad.append("='");
+					ad.append(tokens[h+1]);
+					ad.append("' ");
+					ad.append("OR ");
+					}
+					
+					ad.replace(ad.lastIndexOf("OR"), ad.lastIndexOf("OR") + 2,"");
+					sb2=ad;
+					}
+				
+				
+				
 
 			}
-
+			String query = "SELECT " + sb + " FROM " + sqlDatabase + "."
+					+ Table + " where " + sb2 + ";";
+			if(UtilitiesQBE.isLogAcctive)
+			log.log(Level.INFO, "QueryString: " + query);
+			try{
+			resultSet = statement.executeQuery(query);
+			}catch(Exception ex){
+				resultSet = statement.executeQuery("SHOW columns FROM " + sqlDatabase + "."
+						+ Table + ";");
+				
+			}
 			int length = resultSet.getMetaData().getColumnCount();
 			qdata.setLength(length);
 			// add col names
@@ -292,6 +332,15 @@ public class ConnectionMysql extends ConnectionDB {
 		return qdata;
 
 	}
+	
+	//stackoverflow solution !
+	public static int ordinalIndexOf(String str, String s, int n) {
+	    int pos = str.indexOf(s, 0);
+	    while (n-- > 0 && pos != -1)
+	        pos = str.indexOf(s, pos+1);
+	    return pos;
+	}
+
 
 	protected QueryData SimpleQuery(String QueryString) {
 		qdata = new QueryData();

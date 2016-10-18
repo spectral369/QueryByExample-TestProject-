@@ -10,8 +10,8 @@ import java.util.Vector;
  *
  */
 public class QueryData {
-	Vector<Object> QBECols = null;
-	Vector<Object> data = null;
+	Vector<?> QBECols = null;
+	Vector<?> data = null;
 	int length = 0;
 
 	public void setLength(int length) {
@@ -22,18 +22,18 @@ public class QueryData {
 		this.QBECols = cols;
 	}
 
-	public Vector<Object> getQBECols() {
+	public Vector<?> getQBECols() {
 		if (length == 0)
 			return null;
 		else
 			return QBECols;
 	}
 
-	public void setdata(Vector<Object> data) {
+	public void setdata(Vector<?> data) {
 		this.data = data;
 	}
 
-	public Vector<Object> getData() {
+	public Vector<?> getData() {
 		if (length == 0)
 			return null;
 		else

@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -74,10 +75,12 @@ public class WIndowMain{
 	boolean conFieldsCheck = false;
 	private DefaultListModel<String> modelList;
 	private boolean collsSelected = false;
+	@SuppressWarnings("unused")
 	private Object[] ColsSelected;//for testing
 	private JMenuItem mntmRestart;
 	private JMenu mnExport;
 	private JMenuItem mntmExportToPdf;
+	private JMenuItem mntmExportToXML;
 	private QueryData queryData =  null;
 
 	/**
@@ -108,12 +111,13 @@ public class WIndowMain{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("Query By Example");
 		frame.setBounds(100, 100, 800, 523);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-
+			//ttt
+		
 		panel = new JPanel();
 		panel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
 		tabbedPane.addTab("Connection", null, panel, null);
@@ -190,7 +194,7 @@ public class WIndowMain{
 		});
 		btnConnect.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel.add(btnConnect, "cell 2 7,alignx center");
-
+		frame.getRootPane().setDefaultButton(btnConnect);
 		panel_1 = new JPanel();
 		// make tab 2 hidden
 		// tabbedPane.addTab("Query by Example", null, panel_1, null);
@@ -225,7 +229,7 @@ public class WIndowMain{
 		queryTextField.setToolTipText("Query");
 		queryTextField.setEditable(false);
 		panel_1.add(queryTextField, "flowx,cell 10 1,alignx center");
-		queryTextField.setColumns(10);
+		queryTextField.setColumns(28);
 
 		JLabel lblColumns = new JLabel("Columns");
 		panel_1.add(lblColumns, "cell 18 1");
@@ -296,6 +300,7 @@ public class WIndowMain{
 		btnQuery.setHorizontalAlignment(SwingConstants.RIGHT);
 		btnQuery.setEnabled(false);
 		panel_1.add(btnQuery, "cell 10 1,alignx right");
+		
 
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -330,6 +335,15 @@ public class WIndowMain{
 			}
 		});
 		mnExport.add(mntmExportToPdf);
+		
+		mntmExportToXML = new JMenuItem("Export to XML");
+		mntmExportToXML.setEnabled(false);
+		mntmExportToXML.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportToXMLActionPerformed(e);
+			}
+		});
+		mnExport.add(mntmExportToXML);
 
 		JMenu mnAbout = new JMenu("Help");
 		menuBar.add(mnAbout);
@@ -345,6 +359,16 @@ public class WIndowMain{
 		});
 		mnAbout.add(mntmAbout);
 
+	}
+
+	protected void exportToXMLActionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		try {
+			api.ExportToXMLDefault(queryData);
+		} catch (ParserConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
 	protected void exportToPDFActionPerformed(ActionEvent e) {
@@ -434,7 +458,19 @@ public class WIndowMain{
 
 						for (String s : schem)
 							schemas.addItem(s);
-						tablemodel = new DefaultTableModel();
+						tablemodel = new DefaultTableModel(){
+						/**
+							 * 
+							 */
+							private static final long serialVersionUID = 1L;
+
+						@Override
+					    public boolean isCellEditable(int row, int column) {
+					       //all cells false
+					       return false;
+					    }
+					};
+						
 						tabbedPane.setSelectedIndex(0);
 					} catch (Exception ex) {
 						ex.getMessage();
@@ -493,8 +529,23 @@ public class WIndowMain{
 
 	protected void QueryActionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		try {
+			if(!api.getConnection().isValid(2000))
+				conStatus.setForeground(Color.RED);
+			else conStatus.setForeground(Color.GREEN);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+			
+			
+			
+			
+			
 		if(!mntmExportToPdf.isEnabled())
 			mntmExportToPdf.setEnabled(true);
+		if(!mntmExportToXML.isEnabled())
+			mntmExportToXML.setEnabled(true);
 		if (api.getDatabaseAvailable().toString().equals("MYSQL")) {
 			tablemodel.fireTableDataChanged();
 			Object[] selected;
@@ -590,6 +641,7 @@ public class WIndowMain{
 		}
 		queryTextField.setEditable(true);
 		btnQuery.setEnabled(true);
+		frame.getRootPane().setDefaultButton(btnQuery);
 
 	}
 	

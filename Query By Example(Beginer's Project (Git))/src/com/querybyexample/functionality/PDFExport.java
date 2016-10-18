@@ -43,7 +43,7 @@ public class PDFExport {
 						try{
 							String path = fc.getCurrentDirectory().getAbsolutePath();				
 		                     String name= fc.getSelectedFile().getName();
-		                    writer = PdfWriter.getInstance(document, new FileOutputStream(path+"\\"+name));
+		                    writer = PdfWriter.getInstance(document, new FileOutputStream(path+"//"+name));
 		                    
 		             		document.open();
 		             		
@@ -62,14 +62,17 @@ public class PDFExport {
 		             			tab.addCell(queryData.getQBECols().get(i).toString());
 		             		}
 		             		int data = queryData.getData().size();
-		             		Vector<Object> row =  new Vector<>();
+		             		Vector<?> row =  new Vector<>();
+		             		row =  queryData.getData();
+		             		
 		             		for(int i=0;i<data;i++){
 		             			
-		             			row =  queryData.getData();
+		             			
+		             			Vector<?> v = (Vector<?>) row.get(i);
 		             			for(int y =0;y<count;y++){
-		             			Object obj1 = row.get(y);
-		             			if(obj1!=null){
-		             			String value1=obj1.toString();
+		             			
+		             			if(v!=null){
+		             			String value1=v.get(y).toString();
 		             
 		             			tab.addCell(value1);
 		             			}

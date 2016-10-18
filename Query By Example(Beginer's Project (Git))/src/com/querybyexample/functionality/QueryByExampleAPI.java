@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 public class QueryByExampleAPI {
 
 	ChoseConnection choise = null;
@@ -207,7 +209,7 @@ public class QueryByExampleAPI {
 		return choise.sql.SimpleQuery(Query);
 	}
 
-	public Vector<Object> SQLQBEColumns(String sqlDatabase, String Table,
+	public Vector<?> SQLQBEColumns(String sqlDatabase, String Table,
 			String QueryString, String[] collsSelected) {
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString,
 				collsSelected).QBECols;
@@ -222,7 +224,7 @@ public class QueryByExampleAPI {
 		return queryData;
 	}
 
-	public Vector<Object> SQLQBEData(String sqlDatabase, String Table,
+	public Vector<?> SQLQBEData(String sqlDatabase, String Table,
 			String QueryString, String[] collsSelected) {
 		return choise.sql.QBEQuerySQL(sqlDatabase, Table, QueryString,
 				collsSelected).data;
@@ -256,6 +258,10 @@ public class QueryByExampleAPI {
 	public void ExportToPDFDefault(QueryData queryData){
 		PDFExport pdf =  new PDFExport();
 		pdf.defaultExportToPDF(queryData);
+	}
+	public void ExportToXMLDefault(QueryData queryData) throws ParserConfigurationException{
+		XMLExport xml =  new XMLExport();
+		xml.defaultXMLExport(queryData);
 	}
 	
 	//settings for logger
