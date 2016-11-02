@@ -16,7 +16,7 @@ import java.util.logging.XMLFormatter;
  *
  */
 public class UtilitiesQBE {
-	private static FileHandler fh;
+	private static FileHandler fh= null;
 	public static boolean isLogAcctive = true;
 
 	public static synchronized Logger getLogger(Object obj) throws SecurityException,
@@ -27,6 +27,7 @@ public class UtilitiesQBE {
 		consoleHandler.setLevel(Level.FINER);
 		Logger.getAnonymousLogger().addHandler(consoleHandler);
 		log.setLevel(Level.FINER);
+		if(fh==null)
 		fh = new FileHandler("Log.log", true);
 		fh.setFormatter(new XMLFormatter());
 		log.addHandler(fh);
